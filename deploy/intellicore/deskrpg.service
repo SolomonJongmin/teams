@@ -25,7 +25,9 @@ Environment=DESKRPG_SKIP_BUILD_CHECK=1
 # 런타임 홈(생성된 JWT_SECRET·SQLite DB·업로드)은 소스와 분리해 보존한다.
 Environment=DESKRPG_HOME=/home/soltech/.deskrpg
 # nvm 격리 Node 22. 배포 스크립트가 심볼릭/실경로를 맞춘다.
-ExecStart=/home/soltech/.nvm/versions/node/v22-current/bin/node server.js
+# server.js 는 .ts 모듈을 확장자 없이 import 하므로 tsx 로더가 필요하다
+# (공식 docker-entrypoint.sh 와 동일: node --import tsx server.js).
+ExecStart=/home/soltech/.nvm/versions/node/v22-current/bin/node --import tsx server.js
 Restart=always
 RestartSec=5
 KillMode=mixed

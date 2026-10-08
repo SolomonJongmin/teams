@@ -42,17 +42,17 @@ export default function WorkspaceShell({ children }: { children: ReactNode }) {
         <Link
           href="/gateways"
           className="workspace-brand"
-          aria-label="DeskRPG"
+          aria-label="INTELLI TEAMS"
           onClick={guardNavigation}
         >
           <span className="workspace-brand-mark">
             <DeskRpgMark size={44} />
           </span>
           <span>
-            DeskRPG<small>AI COWORKING SPACE</small>
+            INTELLI TEAMS<small>AI COWORKING SPACE</small>
           </span>
         </Link>
-        <nav className="workspace-navigation" aria-label="DeskRPG">
+        <nav className="workspace-navigation" aria-label="INTELLI TEAMS">
           {links.map(({ href, label, icon: Icon }) => (
             <Link
               key={href}

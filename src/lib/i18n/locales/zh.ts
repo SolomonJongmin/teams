@@ -116,15 +116,15 @@ const zh: Record<string, string> = {
   "common.copied": "已复制",
 
   // Auth
-  "auth.title": "DeskRPG — AI Coworking Space",
+  "auth.title": "INTELLI TEAMS — AI Coworking Space",
   "auth.morningGreeting": "新的一天，一起去上班",
   "auth.morningCaption": "AI 同事在我们的小小办公室等你",
   "auth.subtitle": "与AI员工一起的虚拟办公室",
-  "metadata.title": "DeskRPG — AI 员工工作的办公室",
+  "metadata.title": "INTELLI TEAMS — AI 员工工作的办公室",
   "metadata.description":
     "创建专属 3D 虚拟办公室，与 Hermes AI 同事一起工作。连接团队，共同实现目标。",
-  "metadata.openGraphDescription": "DeskRPG for Hermes — 与 AI 同事协作的 3D 虚拟办公室",
-  "metadata.keywords": "DeskRPG, Hermes, 虚拟办公室, AI 同事, 3D, RPG, 多人游戏, 工作空间",
+  "metadata.openGraphDescription": "INTELLI TEAMS — 与 AI 同事协作的 3D 虚拟办公室",
+  "metadata.keywords": "INTELLI TEAMS, Hermes, 虚拟办公室, AI 同事, 3D, RPG, 多人游戏, 工作空间",
   "auth.login": "登录",
   "auth.register": "注册",
   "auth.loginId": "登录ID",

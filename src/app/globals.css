@@ -103,7 +103,7 @@ body {
   width: 100%;
 }
 .workspace-sidebar {
-  width: 220px;
+  width: 260px;
   flex-shrink: 0;
   height: 100dvh;
   position: sticky;
@@ -122,6 +122,10 @@ body {
   font-weight: 750;
   letter-spacing: -0.8px;
   padding: 0 6px 35px;
+}
+/* 두 단어 브랜드(INTELLI TEAMS)가 한 줄에 유지되게 — 부제(small)만 아래로 내려간다. */
+.workspace-brand > span {
+  white-space: nowrap;
 }
 .workspace-brand small,
 .auth-office-wordmark small {

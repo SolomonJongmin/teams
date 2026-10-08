@@ -28,9 +28,9 @@ export async function generateMetadata(): Promise<Metadata> {
       .filter(Boolean),
     authors: [{ name: "Dante Labs", url: "https://dante-labs.com" }],
     openGraph: {
-      title: "DeskRPG for Hermes",
+      title: "INTELLI TEAMS",
       description: translateServer(locale, "metadata.openGraphDescription"),
-      siteName: "DeskRPG for Hermes",
+      siteName: "INTELLI TEAMS",
       type: "website",
     },
     icons: {

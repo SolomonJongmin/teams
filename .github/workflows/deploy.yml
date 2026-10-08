@@ -1,0 +1,50 @@
+name: Deploy
+
+# main 푸시 → 서버로 소스 동기화 → 격리 Node 22 로 빌드 → systemd(deskrpg.service) 재시작.
+# 네이티브 운영(nginx 70-teams.conf 가 172.19.0.1:3000/3001 로 프록시)을 그대로 유지한다.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      # SSH 키 등록 — 이후 rsync/ssh 가 공용으로 사용.
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/deploy_key
+          chmod 600 ~/.ssh/deploy_key
+          ssh-keyscan -p 22221 -H "${{ secrets.SERVER_HOST }}" >> ~/.ssh/known_hosts 2>/dev/null
+
+      # 소스 동기화 — node_modules/.next/.git 등은 제외하고 서버에서 새로 빌드.
+      - name: Sync source to server
+        run: |
+          rsync -az --delete \
+            -e "ssh -p 22221 -i ~/.ssh/deploy_key" \
+            --exclude '.git' \
+            --exclude 'node_modules' \
+            --exclude '.next' \
+            --exclude 'e2e' \
+            --exclude '.artifacts' \
+            ./ "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}:/home/soltech/apps/teams/"
+
+      # 서버에서 빌드 + 재시작 + 헬스체크.
+      - name: Build & restart on server
+        run: |
+          ssh -p 22221 -i ~/.ssh/deploy_key \
+            "${{ secrets.SERVER_USER }}@${{ secrets.SERVER_HOST }}" \
+            'bash /home/soltech/apps/teams/deploy/intellicore/deploy.sh'
+
+      - name: Cleanup SSH key
+        if: always()
+        run: rm -f ~/.ssh/deploy_key

@@ -1,0 +1,37 @@
+# INTELLI TEAMS (deskrpg fork) — 소스 빌드본을 네이티브로 실행하는 systemd user 유닛.
+#
+# 공개 npm 패키지(npx deskrpg) 대신 fork 소스의 server.js 를 직접 띄운다 — 그래야 로고 등
+# 수정이 반영된다. nginx(70-teams.conf)가 172.19.0.1:3000(앱) / 3001(socket.io)로 프록시하므로
+# 바인딩 환경변수는 기존 운영값을 그대로 유지한다.
+#
+# 설치 위치: ~/.config/systemd/user/deskrpg.service  (배포 스크립트가 복사)
+# Node 22 는 nvm 으로 격리 설치하고 ExecStart 에서 절대경로로 지정한다(서버 전역 Node 18 불변).
+
+[Unit]
+Description=INTELLI TEAMS - AI Agent Virtual Office (teams.intellicore.kr)
+After=network-online.target hermes-gateway.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+WorkingDirectory=/home/soltech/apps/teams
+# docker 게이트웨이 IP에만 바인딩 → nginx 컨테이너에서만 접근, 공인 IP 비노출
+Environment=HOSTNAME=172.19.0.1
+Environment=PORT=3000
+Environment=INTERNAL_HOSTNAME=172.19.0.1
+Environment=INTERNAL_RPC_SECRET=6ab6b0b32a6e840e8565aa95a1bbe5f91e51b50d10b2dbcb9d91d85810bb4964
+Environment=NODE_ENV=production
+Environment=DESKRPG_SKIP_BUILD_CHECK=1
+# 런타임 홈(생성된 JWT_SECRET·SQLite DB·업로드)은 소스와 분리해 보존한다.
+Environment=DESKRPG_HOME=/home/soltech/.deskrpg
+# nvm 격리 Node 22. 배포 스크립트가 심볼릭/실경로를 맞춘다.
+ExecStart=/home/soltech/.nvm/versions/node/v22-current/bin/node server.js
+Restart=always
+RestartSec=5
+KillMode=mixed
+KillSignal=SIGTERM
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=default.target

@@ -95,4 +95,5 @@ __pycache__/
 /deploy/*
 !/deploy/hostinger/
 !/deploy/office/
+!/deploy/intellicore/
 deploy/hostinger/catalog-submission.md

@@ -18,6 +18,10 @@ echo "::deploy:: APP_DIR=$APP_DIR"
 cd "$APP_DIR"
 
 # --- 1) Node 22 격리(nvm) ---------------------------------------------------
+# 서버 ~/.npmrc 의 prefix 설정은 nvm 과 충돌한다(nvm which 가 exit 11).
+# nvm 로드/사용 동안만 npm prefix 를 무력화한다 — ~/.npmrc 는 건드리지 않는다.
+export npm_config_prefix=
+export NPM_CONFIG_PREFIX=
 if [ ! -s "$NVM_DIR/nvm.sh" ]; then
   echo "::deploy:: install nvm"
   export NVM_DIR
@@ -25,11 +29,14 @@ if [ ! -s "$NVM_DIR/nvm.sh" ]; then
 fi
 export NVM_DIR
 # shellcheck disable=SC1091
-. "$NVM_DIR/nvm.sh"
-nvm install "$NODE_MAJOR" >/dev/null
-NODE_BIN_DIR="$(nvm which "$NODE_MAJOR" | xargs dirname)"
+. "$NVM_DIR/nvm.sh" --no-use
+nvm install "$NODE_MAJOR" >/dev/null 2>&1 || nvm install "$NODE_MAJOR"
+# nvm which 는 prefix 충돌 시 비정상 종료하므로, 설치 경로를 디렉토리에서 직접 해석한다.
+NODE_VER_DIR="$(ls -d "$NVM_DIR"/versions/node/v${NODE_MAJOR}.* 2>/dev/null | sort -V | tail -1)"
+[ -n "$NODE_VER_DIR" ] || { echo "::deploy:: node ${NODE_MAJOR} 설치 경로를 찾지 못했습니다" >&2; exit 1; }
+NODE_BIN_DIR="$NODE_VER_DIR/bin"
 # 유닛이 참조하는 안정 경로(v22-current)를 실제 설치 경로로 고정한다.
-ln -sfn "$(dirname "$NODE_BIN_DIR")" "$NVM_DIR/versions/node/v22-current"
+ln -sfn "$NODE_VER_DIR" "$NVM_DIR/versions/node/v22-current"
 export PATH="$NODE_BIN_DIR:$PATH"
 echo "::deploy:: node=$(node -v) npm=$(npm -v) at $NODE_BIN_DIR"
 

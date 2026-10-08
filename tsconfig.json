@@ -30,5 +30,5 @@
     ".next/dev/types/**/*.ts",
     "**/*.mts"
   ],
-  "exclude": ["node_modules", "assets", "public", "scripts/local", ".dryforge"]
+  "exclude": ["node_modules", "assets", "public", "scripts/local", "scripts/readme-capture", ".dryforge"]
 }
